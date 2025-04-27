@@ -1,12 +1,3 @@
-
-# Network Layer
-module "vpc" {
-  count       = var.module_vpc ? 1 : 0
-  source      = "../../terraform-modules/vpc"
-  environment = "development"
-  vpc_cidr    = var.vpc_cidr
-}
-
 module "ecr" {
   count       = var.module_ecr ? 1 : 0
   source      = "../../terraform-modules/ecr"
@@ -16,6 +7,12 @@ module "ecr" {
   ]
 }
 
+module "vpc" {
+  count       = var.module_vpc ? 1 : 0
+  source      = "../../terraform-modules/vpc"
+  environment = "development"
+  vpc_cidr    = var.vpc_cidr
+}
 
 module "msk" {
   count  = var.module_msk ? 1 : 0

@@ -28,3 +28,7 @@ terraform-init:
 terraform-plan:
 	@cd terraform-infra/${ENVIRONMENT} && \
 		terraform plan
+
+terraform-apply:
+	@cd terraform-infra/${ENVIRONMENT} && \
+		terraform apply
