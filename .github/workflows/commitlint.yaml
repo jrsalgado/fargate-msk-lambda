@@ -1,0 +1,33 @@
+name: commitlint
+on:
+  pull_request:
+permissions:
+  actions: read
+  attestations: none
+  checks: read
+  contents: read
+  deployments: none
+  id-token: none
+  issues: read
+  discussions: read
+  packages: read
+  pages: none
+  pull-requests: write
+  repository-projects: none
+  security-events: none
+  statuses: none
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - name: Install dependencies
+        run: npm install
+      - name: Validate all commits from PR
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
