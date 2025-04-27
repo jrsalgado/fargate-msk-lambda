@@ -1,6 +1,6 @@
 # Makefile for Terraform bootstrap process
 
-.PHONY: bootstrap help
+.PHONY: bootstrap terraform-init terraform-plan help
 
 # Configuration
 ENVIRONMENT     ?= development
@@ -21,8 +21,10 @@ bootstrap:
 		echo "Running bootstrap for $(ENVIRONMENT) environment..." && \
 		AWS_PROFILE=$(AWS_PROFILE) ENVIRONMENT=$(ENVIRONMENT) ./tf-bootstrap.sh 2>&1 | tee $(BOOTSTRAP_LOG)
 
-bootstrap-old:
-	@echo "Running bootstrap for $(ENVIRONMENT) environment..."
-	@chmod +x tf-bootstrap.sh
-	AWS_PROFILE=$(AWS_PROFILE) ENVIRONMENT=$(ENVIRONMENT) ./tf-bootstrap.sh 2>&1 | tee $(BOOTSTRAP_LOG)
-	@echo "Bootstrap complete. Log saved to $(BOOTSTRAP_LOG)"
+terraform-init:
+	@cd terraform-infra/${ENVIRONMENT} && \
+		terraform init -reconfigure -backend-config="backend.hcl"
+
+terraform-plan:
+	@cd terraform-infra/${ENVIRONMENT} && \
+		terraform plan

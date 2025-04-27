@@ -9,6 +9,6 @@ variable "aws_profile" {
   sensitive = true
 }
 
-variable "account_id" {
-  default = "064855577434"
+variable "aws_assume_role_arn" {
+  type      = string
 }

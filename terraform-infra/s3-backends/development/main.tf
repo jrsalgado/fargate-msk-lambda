@@ -4,5 +4,3 @@ module "terraform_backend" {
   region      = "us-east-1"
   enable_force_destroy = true # Only for non-production
 }
-
-data "aws_caller_identity" "current" {}

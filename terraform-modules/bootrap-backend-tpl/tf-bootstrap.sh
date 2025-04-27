@@ -5,7 +5,8 @@
 # Configuration
 AWS_PROFILE=${AWS_PROFILE:-default}  # Use default if not set
 ENVIRONMENT=${ENVIRONMENT:-development}
-STATE_BACKEND="${ENVIRONMENT}.backend.hcl" # Backend config file
+STATE_BACKEND="backend.hcl" # Backend config file
+TFVARSFILE="terraform.tfvars"
 BOOTSTRAP_PROVIDERS="providers.bootstrap.tf"
 PROVIDERS_TEMPLATE="providers.tf.s3"
 FINAL_PROVIDERS="providers.tf"
@@ -44,10 +45,14 @@ echo "Bootstrapping successful. Setting up remote backend..."
 
 # Generate backend configuration from outputs
 cat > "${STATE_BACKEND}" <<EOF
-bucket         = "$(terraform output -raw backend_config_bucket)"
-key            = "terraform.tfstate"
-region         = "$(terraform output -raw backend_config_region)"
-dynamodb_table = "$(terraform output -raw backend_config_dynamodb_table)"
+bucket            = "$(terraform output -raw backend_config_bucket)"
+key               = "terraform-s3-backend.tfstate"
+region            = "us-east-1"
+use_lockfile      = true
+EOF
+
+cat > "${TFVARSFILE}" <<EOF
+aws_assume_role_arn = "$(terraform output -raw backend_config_role_arn)"
 EOF
 
 # Rotate provider configuration files

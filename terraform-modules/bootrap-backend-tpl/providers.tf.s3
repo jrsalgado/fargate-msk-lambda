@@ -9,14 +9,13 @@ terraform {
 
   backend "s3" {
     # Configuration will be provided by backend.hcl
-    role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/terraform-apply-development"
+    role_arn = var.aws_assume_role_arn
   }
 }
 
 provider "aws" {
-  alias    = "development"
   region   = "us-east-1"
   assume_role {
-    role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/terraform-apply-development"
+    role_arn = var.aws_assume_role_arn
   }
 }
