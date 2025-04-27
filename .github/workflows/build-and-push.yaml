@@ -36,6 +36,13 @@ jobs:
         run: |
           echo "repository_uri=$(aws ecr describe-repositories --repository-names ${{ env.ECR_REPOSITORY }} --query 'repositories[0].repositoryUri' --output text)" >> $GITHUB_OUTPUT
 
+      - name: Check repository structure
+        run: |
+          ls -la
+          ls -la apps/
+          ls -la apps/hello-world/
+          echo "Current directory: $(pwd)"
+
       - name: Build Docker image
         run: |
           docker build -t ${{ env.CONTAINER_NAME }} -f ./apps/hello-world/Dockerfile ./apps/hello-world
