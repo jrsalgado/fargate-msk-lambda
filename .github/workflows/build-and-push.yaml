@@ -38,7 +38,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ env.CONTAINER_NAME }} ./apps/hello-world
+          docker build -t ${{ env.CONTAINER_NAME }} -f ./apps/hello-world/Dockerfile ./apps/hello-world
 
       - name: Tag Docker image
         run: |
