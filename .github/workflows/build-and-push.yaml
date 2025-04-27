@@ -1,0 +1,61 @@
+name: Build and Push to ECR
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: fml-development
+  CONTAINER_NAME: hello-world
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Get ECR Repository URI
+        id: ecr-repository
+        run: |
+          echo "repository_uri=$(aws ecr describe-repositories --repository-names ${{ env.ECR_REPOSITORY }} --query 'repositories[0].repositoryUri' --output text)" >> $GITHUB_OUTPUT
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.CONTAINER_NAME }} ./apps/hello-world
+
+      - name: Tag Docker image
+        run: |
+          docker tag ${{ env.CONTAINER_NAME }}:latest ${{ steps.ecr-repository.outputs.repository_uri }}:latest
+          docker tag ${{ env.CONTAINER_NAME }}:latest ${{ steps.ecr-repository.outputs.repository_uri }}:${{ github.sha }}
+
+      - name: Push Docker images
+        run: |
+          docker push ${{ steps.ecr-repository.outputs.repository_uri }}:latest
+          docker push ${{ steps.ecr-repository.outputs.repository_uri }}:${{ github.sha }}
+
+#      - name: Update Terraform variable with new image SHA
+#        run: |
+#          # Update your Terraform variables or parameters store with the new image SHA
+#          # Example using AWS SSM Parameter Store:
+#          aws ssm put-parameter \
+#            --name "/fml/hello-world-api/image-tag" \
+#            --value "${{ github.sha }}" \
+#            --type "String" \
+#            --overwrite
