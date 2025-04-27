@@ -1,27 +1,33 @@
 
-# Network
+# Network Layer
 module "vpc" {
-  source = "../../terraform-modules/vpc"
+  count       = var.module_vpc ? 1 : 0
+  source      = "../../terraform-modules/vpc"
   environment = "development"
-  vpc_cidr = "172.16.0.0/16"
+  vpc_cidr    = var.vpc_cidr
 }
 
-# TODO: setup ECR
-#module "ecr" {
-#  source = "../../terraform-modules/ecr"
-#}
+module "ecr" {
+  count       = var.module_ecr ? 1 : 0
+  source      = "../../terraform-modules/ecr"
+  environment = "development"
+  repository_read_write_access_arns = [
+    var.aws_assume_role_arn
+  ]
+}
 
-# TODO: setup KAFKA
-#module "msk" {
-#  source              = "../../terraform-modules/msk"
-#}
 
-# TODO: setup ECS
-#module "ecs" {
-#  source              = "../../terraform-modules/ecs"
-#}
+module "msk" {
+  count  = var.module_msk ? 1 : 0
+  source = "../../terraform-modules/msk"
+}
 
-# TODO: setup Lambda
-#module "lambda" {
-#  source              = "../../terraform-modules/lambda"
-#}
+module "ecs" {
+  count  = var.module_ecs ? 1 : 0
+  source = "../../terraform-modules/ecs"
+}
+
+module "lambda" {
+  count  = var.module_lambda ? 1 : 0
+  source = "../../terraform-modules/lambda"
+}

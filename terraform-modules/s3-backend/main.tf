@@ -20,23 +20,6 @@ resource "aws_s3_bucket" "terraform_state" {
   }
 }
 
-# DynamoDB Table for state locking
-resource "aws_dynamodb_table" "terraform_locks" {
-  name         = local.table_name
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "LockID"
-
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-
-  tags = {
-    Environment = var.environment
-    ManagedBy   = "Terraform"
-  }
-}
-
 # IAM Role for Terraform operations
 resource "aws_iam_role" "terraform_apply" {
   name               = local.role_name
@@ -85,17 +68,6 @@ resource "aws_iam_policy" "terraform_base" {
           aws_s3_bucket.terraform_state.arn,
           "${aws_s3_bucket.terraform_state.arn}/*"
         ]
-      },
-      {
-        Effect = "Allow",
-        Action = [
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:DeleteItem",
-          "dynamodb:Describe*",
-          "dynamodb:List*",
-        ],
-        Resource = aws_dynamodb_table.terraform_locks.arn
       }
     ]
   })
@@ -110,8 +82,8 @@ resource "aws_iam_policy" "terraform_infra" {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect   = "Allow",
-        Action   = [
+        Effect = "Allow",
+        Action = [
           "ecr:*",
           "ecs:*",
           "lambda:*",

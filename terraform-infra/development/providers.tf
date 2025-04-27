@@ -8,7 +8,7 @@ terraform {
   }
 
   backend "s3" {
-    role_arn       = "arn:aws:iam::064855577434:role/terraform-apply-development"
+    role_arn = var.aws_assume_role_arn
   }
 }
 
@@ -16,7 +16,7 @@ provider "aws" {
   #allowed_account_ids = [""]
   region = "us-east-1"
   assume_role {
-    role_arn = "arn:aws:iam::064855577434:role/terraform-apply-development"
+    role_arn = var.aws_assume_role_arn
   }
   default_tags {
     tags = {

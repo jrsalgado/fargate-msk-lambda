@@ -1,6 +1,6 @@
 variable "environment" {
-  type      = string
-  default   = "development"
+  type    = string
+  default = "development"
 }
 
 variable "aws_profile" {
@@ -10,5 +10,5 @@ variable "aws_profile" {
 }
 
 variable "aws_assume_role_arn" {
-  type      = string
+  type = string
 }

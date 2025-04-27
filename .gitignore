@@ -29,3 +29,6 @@
 
 # Log files
 *.log
+
+**/**/tfplan.*
+**/**/terraform_apply.log.*
