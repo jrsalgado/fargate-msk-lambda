@@ -59,7 +59,7 @@ module "ecs" {
             },
             {
               name  = "KAFKA_EVENTS_TOPIC",
-              value = "default"
+              value = "events"
             },
             {
               name  = "ENVIRONMENT"

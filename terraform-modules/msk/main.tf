@@ -10,7 +10,7 @@ locals {
 module "msk_serverless" {
   source  = "terraform-aws-modules/msk-kafka-cluster/aws//modules/serverless"
   version = "2.11.1" # Use latest version
-  name = local.name
+  name    = local.name
 
   security_group_ids = [module.msk_sg.security_group_id]
   subnet_ids         = var.vpc_private_subnets
