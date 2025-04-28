@@ -26,7 +26,6 @@ variable "module_ecs" {
   default = false
 }
 
-
 variable "module_lambda" {
   type    = bool
   default = false
